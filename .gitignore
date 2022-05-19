@@ -276,3 +276,6 @@ TSWLatexianTemp*
 *.lpz
 
 .deps
+
+.vscode
+tex/*.pdf
