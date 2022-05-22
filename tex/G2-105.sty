@@ -71,7 +71,7 @@
   \def\chaptermark##1{%
     \markright {\MakeUppercase{%
       \ifnum \c@secnumdepth >\m@ne
-          \@chapapp\ \thechapter. \ %
+          \@chapapp\ \thechapter \ %
       \fi
       ##1}}}}
 \def\ps@myheadings{%
@@ -242,7 +242,7 @@
 
 %  Раздел
 \newcounter{chapter}
-\renewcommand\thechapter{\@arabic\c@chapter}
+\renewcommand\thechapter{\@arabic\c@chapter.}
 \newif\if@breakingbeforechapter\@breakingbeforechaptertrue
 
 % Chapter definition, see report class as reference
@@ -311,7 +311,7 @@
 
 %  Подраздел
 \newcounter{section}[chapter]
-\renewcommand\thesection{\thechapter.\@arabic\c@section}
+\renewcommand\thesection{\thechapter\@arabic\c@section}
 \newcommand\section{%
  \@startsection{section}{1}%
  {\GostTitleIndent}{\GostBeforTitleSkip}{\GostAfterTitleSkip}%
@@ -709,7 +709,7 @@
 % Скобки убраны
 \newcommand\EqInChapter{%
  \@addtoreset{equation}{chapter}%
- \renewcommand{\theequation}{\thechapter.\arabic{equation}}%
+ \renewcommand{\theequation}{\thechapter\arabic{equation}}%
 }
 
 %Перенос формул по =+-
@@ -766,7 +766,7 @@
 \newcommand\PicInChapter{%
     \@addtoreset{figure}{chapter}%
     \@figuresonchaptertrue%
-    \renewcommand{\thefigure}{\thechapter.\arabic{figure}}%
+    \renewcommand{\thefigure}{\thechapter\arabic{figure}}%
 }
 
 % 4.4 - таблицы
@@ -785,7 +785,7 @@
 \newcommand\TableInChapter{%
     \@addtoreset{table}{chapter}%
     \@tablesonchaptertrue%
-    \renewcommand{\thetable}{\thechapter.\arabic{table}}%
+    \renewcommand{\thetable}{\thechapter\arabic{table}}%
 }
 
 \RequirePackage{longtable} % многостраничные таблицы
