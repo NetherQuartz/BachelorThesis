@@ -8,6 +8,7 @@ PDFTRIMWHITE=pdfcrop
 
 # Output file
 PDF=thesis.pdf
+FINNAME="Ларькин_ВД_М8О-403Б-18_2022.pdf"
 
 # Input paths
 DIA=graphics/dia
@@ -55,7 +56,7 @@ $(PDF): $(TEX)/$(MAINTEX).tex $(STYLES) $(BIBFILE)
 	cd tex && makeindex $(MAINTEX).nlo -s nomencl.ist -o $(MAINTEX).nls 
 	cd tex && $(LATEX) $(MAINTEX)
 	cd tex && $(LATEX) $(MAINTEX)
-	cp tex/$(PDF) .
+	cp tex/$(PDF) $(FINNAME)
 
 $(INC)/dia/%.pdf: $(DIA)/%.dia
 	mkdir -p $(INC)/dia
@@ -90,8 +91,6 @@ clean:
 	find $(TEX)/ -regextype posix-egrep -type f ! -regex ".*\.(sty|tex|clo|cls|bib|bst|gitignore)" -exec $(RM) {} \; ;
 	$(RM) -r $(DEPS)
 	$(RM) -r $(INC)
-# cp $(TEX)/$(MAINTEX).pdf .
-# $(RM) $(TEX)/$(MAINTEX)
 
 printpdfs: $(PDF)
 	$(GSCONV) $(PDF)

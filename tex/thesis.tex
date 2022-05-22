@@ -21,16 +21,20 @@
 
 \frontmatter % выключает нумерацию ВСЕГО; здесь начинаются ненумерованные главы: реферат, введение, глоссарий, сокращения и прочее.
 
+\includepdf[pages=-]{../inc/title.pdf}
+
 \include{00-abstract}
 
 \tableofcontents
 
 \printnomenclature % Автоматический список сокращений
 
-\include{12-intro}
+\include{10-intro}
+\include{20-main}
 
 \mainmatter % это включает нумерацию глав и секций в документе ниже
 
+\include{21-theory}
 
 \backmatter %% Здесь заканчивается нумерованная часть документа и начинаются ссылки и
             
