@@ -1,0 +1,9 @@
+version: "3.0"
+
+services:
+  latex_builder:
+    image: builder
+    build: .
+    volumes:
+      - ../:/src/:rw
+    command: tail -F /dev/random
