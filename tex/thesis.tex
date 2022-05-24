@@ -10,6 +10,9 @@
 \usepackage{fontspec}
 \setmainfont{Times New Roman}
 
+\usepackage[math-style=ISO]{unicode-math}
+\setmathfont{Times New Roman}
+
 % Настройки листингов.
 \usepackage{local-minted}
 
@@ -27,14 +30,13 @@
 
 \tableofcontents
 
-\printnomenclature % Автоматический список сокращений
-
 \include{10-intro}
 \include{20-main}
 
 \mainmatter % это включает нумерацию глав и секций в документе ниже
 
 \include{21-theory}
+\include{22-practice}
 
 \backmatter %% Здесь заканчивается нумерованная часть документа и начинаются ссылки и
             
