@@ -10,8 +10,8 @@
 \usepackage{fontspec}
 \setmainfont{Times New Roman}
 
-\usepackage[math-style=ISO]{unicode-math}
-\setmathfont{Times New Roman}
+% \usepackage[math-style=ISO]{unicode-math}
+% \setmathfont{Times New Roman}
 
 % Настройки листингов.
 \usepackage{local-minted}
@@ -19,6 +19,14 @@
 % Полезные макросы листингов.
 \include{macros.inc}
 
+% Собственные операторы
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\MSE}{MSE}
+\DeclareMathOperator{\CE}{CE}
+\DeclareMathOperator{\BCE}{BCE}
+\DeclareMathOperator{\Softmax}{Softmax}
+
+\DeclareMathOperator{\R}{\mathbb{R}}
 
 \begin{document}
 
