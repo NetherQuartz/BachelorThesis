@@ -237,7 +237,7 @@
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{../inc/images/language_model.png}
+    \includegraphics[width=0.8\textwidth]{../inc/images/language_model.png}
     \caption{Простая нейросетевая языковая модель}
     \label{fig:lang_model}
 \end{figure}
@@ -248,9 +248,163 @@
 
 \section{Рекуррентные нейронные сети}
 
+Так как текст представляет собой последовательность токенов, а определение языковой модели подразумевает зависимость вероятности следующих токенов от нескольких предыдущих, естественно попробовать реализовать алгоритм его обработки, который бы учитывал эту рекуррентность.
 
-\subsection{Модификации RNN}
+Примером таких моделей являются рекуррентные нейронные сети (англ. --- Recurrent Neural Networks, RNN). Их особенность состоит в наличии так называемого скрытого состояния --- вектора, накапливающего в себе информацию, полученную от поэлементной обработки входной последовательности, как отражено в уравнении \ref*{eq:rnn_hidden_state}. Здесь $x_t$ --- вход слоя, $w_{hh}$, $w_{xh}$, $w_{hy}$ --- обучаемые параметры слоёв сети, $y_t$ --- выход слоя, $h_t$ --- скрытое состояние на шаге $t$, $\Th(\cdot)$ --- гиперболический тангенс (уравнение \ref*{eq:tanh}, рисунок \ref*{fig:tanh}).
 
+\begin{equation}
+    \label{eq:rnn_hidden_state}
+    \begin{cases}
+        h_t = \Th(w_{hh}h_{t-1}+w_{xh}x_t) \\
+        y_t = w_{hy}h_t
+    \end{cases}
+\end{equation}
+
+\begin{equation}
+    \label{eq:tanh}
+    \Th(x)=\frac{e^x-e^{-x}}{e^x+e^{-x}}
+\end{equation}
+
+Схематическое изображение RNN представлено на рисунке \ref*{fig:rnn}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../inc/images/rnn.png}
+    \caption{Схема работы рекуррентной нейронной сети}
+    \label{fig:rnn}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[domain=-6:6]
+        \draw[thin,color=gray] (-6.2,-2.2) grid (6.2,2.2);
+      
+        \draw[line width=0.35mm,->] (-6.2,0) -- (6.2,0) node[right] {$x$};
+        \draw[line width=0.35mm,->] (0,-2.2) -- (0,2.2) node[above] {$y$};
+
+        \draw[] (0.05, 1) node[right] {$1$};
+        \draw[] (1, -0.05) node[below] {$1$};
+    
+        \draw[line width=0.4mm,color=blue,smooth] plot function{(exp(x)-exp(-x))/((exp(x)+exp(-x)))};
+    \end{tikzpicture}
+    \caption{График гиперболического тангенса}
+    \label{fig:tanh}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[domain=-6:6]
+        \draw[thin,color=gray] (-6.2,-2.2) grid (6.2,2.2);
+      
+        \draw[line width=0.35mm,->] (-6.2,0) -- (6.2,0) node[right] {$x$};
+        \draw[line width=0.35mm,->] (0,-2.2) -- (0,2.2) node[above] {$y$};
+
+        \draw[] (0.05, 1) node[right] {$1$};
+        \draw[] (1, -0.05) node[below] {$1$};
+    
+        \draw[line width=0.4mm,color=blue,smooth] plot function{1-((exp(x)-exp(-x))/((exp(x)+exp(-x))))*((exp(x)-exp(-x))/((exp(x)+exp(-x))))};
+    \end{tikzpicture}
+    \caption{График производной гиперболического тангенса}
+    \label{fig:tanh_der}
+\end{figure}
+
+Рекуррентные нейронные сети способны улавливать зависимости в последовательных данных, но у них есть один недостаток. Как видно на рисунке \ref*{fig:tanh_der}, производная гиперболического тангенса, используемого в качестве функции активации в RNN, почти на всей области определения близка к нулю. На практике это означает, что чем длиннее последовательность данных, тем больше в формуле производной функции потерь будет множителей, близких к нулю, и тем ближе к нулю будут шаги градиентного спуска, что замедляет обучение, а иногда делает его и вовсе невозможным. С этим связана вторая проблема --- новые данные в последовательности оказывают на результат большее влияние, чем старые за счёт многократного умножения последних на близкие к нулю числа. Иными словами можно сказать, что нейросеть <<забывает>> старые данные.
+
+\section{Модификации RNN}
+
+Для решения этой проблемы существует две основных модификации RNN, общая идея которых сводится к введению дополнительных блоков для предсказания степени важности пришедших на вход данных, обеспечивая более контролируемое забывание.
+
+\subsection{GRU}
+
+Архитектура GRU (англ. --- Gated Recurrent Unit) предлагает решать проблему забывания с помощью ряда так называемых вентилей:
+\begin{itemize}
+    \item вентиль обновления, определяющий количество информации, которое требуется сохранить с предыдущей итерации (уравнение \ref*{eq:gru_update}),
+    \item вентиль забывания, определяющий количество информации, которое требуется забыть (уравнение \ref*{eq:gru_reset}),
+\end{itemize}
+
+\begin{equation}
+    \label{eq:gru_update}
+    z_t = \sigma(w_{zx}x_t+w_{zh}h_{t-1})
+\end{equation}
+
+\begin{equation}
+    \label{eq:gru_reset}
+    r_t = \sigma(w_{rx}x_t+w_{rh}h_{t-1})
+\end{equation}
+
+Информация, которую будет хранить текущая ячейка сети, рассчитывается по формуле \ref*{eq:gru_current}, а итоговое значение скрытого состояния --- по формуле \ref*{eq:gru_state}.
+
+\begin{equation}
+    \label{eq:gru_current}
+    c_t = \Th(w_{cx}x_t+w_{ch}r_th_{t-1})
+\end{equation}
+
+\begin{equation}
+    \label{eq:gru_state}
+    h_t = (1-z_t)h_{t-1}+z_tc_t
+\end{equation}
+
+Здесь $\sigma(\cdot)$ --- сигмоида, а $w_{zx}$, $w_{zh}$, $w_{rx}$, $w_{rh}$, $w_{cx}$, $w_{ch}$ --- обучаемые параметры слоя.
+Схема ячейки GRU изображена на рисунке \ref*{fig:gru}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../inc/images/gru.png}
+    \caption{Схема ячейки GRU}
+    \label{fig:gru}
+\end{figure}
+
+\subsection{LSTM}
+
+Нейронная сеть с долгой краткосрочной памятью (англ. --- Long Short-Term Memory, LSTM) предлагает решение для борьбы с забыванием, благодаря которому сети удаётся сохранять в 4 раза больше информации, чем обычной RNN \cite{art:rnn}.
+
+Эта архитектура тоже оперирует понятием вентиля, их в ней три:
+\begin{itemize}
+    \item входной вентиль, контролирующий поток приходящей информации (уравнение \ref*{eq:lstm_input}),
+    \item вентиль забывания, управляющий количеством информации, которое требуется сохранить с предыдущей итерации (уравнение \ref*{eq:lstm_forget}),
+    \item выходной вентиль, контролирующий поток выходящей информации (уравнение \ref*{eq:lstm_output}).
+\end{itemize}
+
+\begin{equation}
+    \label{eq:lstm_input}
+    i_t = \sigma(w_{ix}x_t+w_{ih}h_{t-1})
+\end{equation}
+
+\begin{equation}
+    \label{eq:lstm_forget}
+    f_t = \sigma(w_{fx}x_t+w_{fh}h_{t-1})
+\end{equation}
+
+\begin{equation}
+    \label{eq:lstm_output}
+    o_t = \sigma(w_{ox}x_t+w_{oh}h_{t-1})
+\end{equation}
+
+Далее вычисляются промежуточные значения $g_t$ и $s_t$ (уравнения \ref*{eq:lstm_input_node} и \ref*{eq:hidden}), а с их помощью считается результирующее скрытое состояние $h_t$ по формуле \ref*{eq:lstm_state}.
+
+\begin{equation}
+    \label{eq:lstm_input_node}
+    g_t = \Th(w_{gx}x_t+w_{gh}h_{t-1})
+\end{equation}
+
+\begin{equation}
+    \label{eq:lstm_hidden}
+    s_t = s_{t-1}f_t+g_ti_t
+\end{equation}
+
+\begin{equation}
+    \label{eq:lstm_state}
+    h_t = \Th(s_t)o_t
+\end{equation}
+
+Схема ячейки LSTM изображена на рисунке \ref*{fig:lstm}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../inc/images/lstm.png}
+    \caption{Схема ячейки LSTM}
+    \label{fig:lstm}
+\end{figure}
 
 \section{Архитектура Transformer}
 
