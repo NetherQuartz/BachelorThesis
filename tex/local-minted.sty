@@ -2,19 +2,36 @@
 
 \ifdefined\NoMinted
 \else
-\usepackage{minted}
+\usepackage{floatrow}
+\usepackage{minted}    
+\floatsetup[listing]{style=Plaintop}
+
+\makeatletter
+\AtBeginEnvironment{minted}{\dontdofcolorbox}
+\def\dontdofcolorbox{\renewcommand\fcolorbox[4][]{##4}}
+\makeatother
+
+\makeatletter
+\renewcommand*{\thelisting}{\thechapter\arabic{listing}}
+\@addtoreset{listing}{chapter}
+\makeatother
+
+\setminted[text]{linenos,frame=single,fontsize=\footnotesize,style=bw,fontfamily=cyrillicfontttnoftr,breaklines}
+\setminted[python]{linenos,frame=single,fontsize=\footnotesize,style=bw,fontfamily=cyrillicfontttnoftr,breaklines}
 
 % Сюда вставлять общие опции
-\def\mintedoptions{linenos,frame=single,fontsize=\footnotesize,style=bw,fontfamily=cyrillicfontttnoftr}
+\def\mintedoptions{linenos,frame=single,fontsize=\footnotesize,style=bw,fontfamily=cyrillicfontttnoftr,breaklines}
 
 % Сюда пихать новые языки
 \newcommand{\makenewmintedenviromnents}[1]{%
   \newminted{c}{#1}%
   \newminted{ebnf}{#1}%
   \newminted{python}{#1}%
+  \newminted{text}{#1}%
   \newmintedfile{c}{#1}%
   \newmintedfile{ebnf}{#1}%
   \newmintedfile{python}{#1}%
+  \newmintedfile{text}{#1}%
 }
 
 % Магия! Здесь происходит непосредственное определение всех окружений
