@@ -221,7 +221,7 @@
         \mathbf{v}^t=\beta_2\mathbf{v}^{t-1}+(1-\beta_2)(\nabla L(\mathbf{w}))^2 \\
         \hat{\mathbf{m}}^t=\frac{\mathbf{m}^t}{1-\beta_1^t} \\
         \hat{\mathbf{v}}^t=\frac{\mathbf{v}^t}{1-\beta_2^t} \\
-        \mathbf{w}^{t+1}=\mathbf{t}-\frac{\alpha}{\sqrt{\hat{\mathbf{v}}^t}+\varepsilon}\hat{\mathbf{m}}^t \\
+        \mathbf{w}^{t+1}=\mathbf{w}^t-\frac{\alpha}{\sqrt{\hat{\mathbf{v}}^t}+\varepsilon}\hat{\mathbf{m}}^t \\
         \mathbf{m}^0=\mathbf{0},\quad\mathbf{v}^0=\mathbf{0}
     \end{cases}
 \end{equation}
